@@ -7,27 +7,45 @@ import android.widget.EditText
 data class Date(val day: Int, val month: Int, val year: Int)
 
 class DateHelper {
+
     @SuppressLint("SetTextI18n")
     fun format(dateText: EditText, start: Int, before: Int, count: Int) {
-        val rawStr = dateText.text.toString()
-        dateText.setSelection(rawStr.length)
+        val rawText = dateText.text.toString()
+        val cleanText = rawText.replace("[^\\d]".toRegex(), "")
 
-        if (rawStr.length > 10) {
-            dateText.setText(rawStr.substring(0, 10))
+        if (cleanText.length > 8) {
+            dateText.setText(rawText.substring(0, rawText.length - 1))
+            dateText.setSelection(dateText.text?.length ?: 0)
             return
         }
 
-        if (rawStr.length == 2 && before == 0 && count == 1) {
-            dateText.setText(rawStr.substring(0, 2) + ".")
+        val formatted = buildString {
+            if (cleanText.isNotEmpty()) {
+                append(cleanText.substring(0, minOf(2, cleanText.length)))
+                if (cleanText.length > 2) {
+                    append(".").append(cleanText.substring(2, minOf(4, cleanText.length)))
+                    if (cleanText.length > 4) {
+                        append(".").append(cleanText.substring(4, minOf(8, cleanText.length)))
+                    }
+                }
+            }
         }
 
-        if (rawStr.length == 5 && before == 0 && count == 1) {
-            dateText.setText(rawStr.substring(0, 5) + ".")
+        var currentPositionCursor = start
+
+        if (cleanText.length > 2 && start <= 2 && before == 0 && count == 1) {
+            currentPositionCursor += 2
+        }
+        if (cleanText.length > 4 && start <= 5 && before == 0 && count == 1) {
+            currentPositionCursor += 2
+        }
+        if (before == 1 && (start == 3 || start == 6)) {
+            currentPositionCursor -= 1
         }
 
-        if (before == 1 && count == 0 && (start == 2 || start == 5)) {
-            dateText.setText(rawStr.substring(0, start - 1) + rawStr.substring(start))
-            dateText.setSelection(start - 1)
+        if (rawText != formatted) {
+            dateText.setText(formatted)
+            dateText.setSelection(minOf(currentPositionCursor, formatted.length))
         }
     }
 

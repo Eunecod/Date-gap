@@ -1,6 +1,5 @@
 package com.example.date_gap
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -25,11 +24,11 @@ class FragmentNumberDay : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<EditText>(R.id.edit_start_date).doOnTextChanged { text, start, before, count ->
+        view.findViewById<EditText>(R.id.edit_start_date).doOnTextChanged { _, start, before, count ->
             dateHelper.format(view.findViewById<EditText>(R.id.edit_start_date), start, before, count)
         }
 
-        view.findViewById<EditText>(R.id.edit_end_date).doOnTextChanged { text, start, before, count ->
+        view.findViewById<EditText>(R.id.edit_end_date).doOnTextChanged { _, start, before, count ->
             dateHelper.format(view.findViewById<EditText>(R.id.edit_end_date), start, before, count)
         }
     }
